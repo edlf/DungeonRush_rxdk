@@ -71,6 +71,7 @@ int chooseOptions(int optionsNum, Text** options) {
   int lineGap = FONT_SIZE + FONT_SIZE / 2,
       totalHeight = lineGap * (optionsNum - 1);
   int startY = (SCREEN_HEIGHT - totalHeight) / 2;
+
   while (!moveCursor(optionsNum)) {
     Sprite* sprite = player->sprites->head->element;
     sprite->ani->at = AT_CENTER;

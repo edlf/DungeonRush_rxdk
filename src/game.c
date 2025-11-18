@@ -25,6 +25,14 @@
 #ifdef DBG
 #include <assert.h>
 #endif
+
+/* -------- Joystick globals for gameplay -------- */
+#define JOY_GAME_DEAD_ZONE 12000
+
+static SDL_Joystick* g_gameJoystick = NULL;
+static int g_gameJoystickInitialized = 0;
+/* ----------------------------------------------- */
+
 extern const int SCALE_FACTOR;
 extern const int n, m;
 
@@ -1036,6 +1044,131 @@ int wasdToDirection(int keyValue) {
   return -1;
 }
 
+/* Initialise joystick subsystem and open joystick #0 */
+static void InitGameJoystick(void)
+{
+    if (g_gameJoystickInitialized) {
+        return;
+    }
+    g_gameJoystickInitialized = 1;
+
+    if (!(SDL_WasInit(SDL_INIT_JOYSTICK) & SDL_INIT_JOYSTICK)) {
+        if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) != 0) {
+            SDL_Log("InitGameJoystick: SDL_InitSubSystem(SDL_INIT_JOYSTICK) failed: %s",
+                SDL_GetError());
+            return;
+        }
+    }
+
+    SDL_JoystickEventState(SDL_DISABLE);
+
+    int num = SDL_NumJoysticks();
+    SDL_Log("InitGameJoystick: SDL_NumJoysticks = %d", num);
+
+    if (num > 0) {
+        g_gameJoystick = SDL_JoystickOpen(0);
+        if (g_gameJoystick) {
+            const char* name = SDL_JoystickName(g_gameJoystick);
+            SDL_Log("InitGameJoystick: opened joystick 0 for gameplay: %s",
+                name ? name : "unknown");
+        }
+        else {
+            SDL_Log("InitGameJoystick: SDL_JoystickOpen(0) failed: %s", SDL_GetError());
+        }
+    }
+}
+
+/* Convert joystick state to LEFT/RIGHT/UP/DOWN or -1 if neutral */
+static int joystickToDirection(void)
+{
+    InitGameJoystick();
+    if (!g_gameJoystick) {
+        return -1;
+    }
+
+    SDL_JoystickUpdate();
+
+    /* Prefer D-pad (hat 0) */
+    if (SDL_JoystickNumHats(g_gameJoystick) > 0) {
+        Uint8 hat = SDL_JoystickGetHat(g_gameJoystick, 0);
+        if (hat & SDL_HAT_LEFT)  return LEFT;
+        if (hat & SDL_HAT_RIGHT) return RIGHT;
+        if (hat & SDL_HAT_UP)    return UP;
+        if (hat & SDL_HAT_DOWN)  return DOWN;
+    }
+
+    /* Fallback: left stick (axes 0,1) */
+    Sint16 ax = 0, ay = 0;
+    if (SDL_JoystickNumAxes(g_gameJoystick) > 0) {
+        ax = SDL_JoystickGetAxis(g_gameJoystick, 0);
+    }
+    if (SDL_JoystickNumAxes(g_gameJoystick) > 1) {
+        ay = SDL_JoystickGetAxis(g_gameJoystick, 1);
+    }
+
+    if (abs(ax) < JOY_GAME_DEAD_ZONE && abs(ay) < JOY_GAME_DEAD_ZONE) {
+        return -1;
+    }
+
+    if (abs(ax) > abs(ay)) {
+        return (ax < 0) ? LEFT : RIGHT;
+    }
+    else {
+        return (ay < 0) ? UP : DOWN;
+    }
+}
+
+static void handleGamepadControl(bool* quitFlag)
+{
+    InitGameJoystick();
+    if (!g_gameJoystick) {
+        return;
+    }
+
+    SDL_JoystickUpdate();
+
+    /* According to your driver:
+       0=A, 1=B, 6=START, 7=BACK */
+    Uint8 btnStart = SDL_JoystickGetButton(g_gameJoystick, 6);
+    Uint8 btnBack = SDL_JoystickGetButton(g_gameJoystick, 7);
+
+    static Uint8 lastStart = 0;
+    static Uint8 lastBack = 0;
+
+    if (btnStart && !lastStart) {
+        /* Same as Esc key */
+        pauseGame();
+    }
+
+    if (btnBack && !lastBack) {
+        *quitFlag = true;
+        setTerm(GAME_OVER);
+    }
+
+    lastStart = btnStart;
+    lastBack = btnBack;
+
+    /* Movement for player 0 */
+    int dir = joystickToDirection();
+    if (dir >= 0 && playersCount > 0) {
+        int id = 0;
+        Snake* player = spriteSnake[id];
+
+        if (player &&
+            player->playerType == LOCAL &&
+            !player->buffs[BUFF_FROZEN] &&
+            player->sprites->head != NULL) {
+
+            static int lastDir0 = -1;
+            if (dir != lastDir0) {
+                sendPlayerMovePacket(id, dir);
+                changeSpriteDirection(player->sprites->head, dir);
+                lastDir0 = dir;
+            }
+        }
+    }
+}
+
 bool handleLocalKeypress() {
   static SDL_Event e;
   bool quit = false;
@@ -1061,6 +1194,10 @@ bool handleLocalKeypress() {
       }
     }
   }
+
+  /* Gamepad/joystick input for player 0 */
+  handleGamepadControl(&quit);
+
   return quit;
 }
 
