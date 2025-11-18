@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef __XBOX__
 #include <unistd.h>
+#endif
 
 #include "ai.h"
 #include "audio.h"
@@ -525,7 +527,7 @@ void destroyGame(int status) {
   renderCenteredText(text, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2);
   destroyText(text);
   SDL_RenderPresent(renderer);
-  sleep(RENDER_GAMEOVER_DURATION);
+  SDL_Delay((Uint32)RENDER_GAMEOVER_DURATION * 1000);
   clearRenderer();
 }
 
