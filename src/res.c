@@ -271,13 +271,13 @@ bool loadMedia() {
     sprintf(imgPath, "%s.png", tilesetPath[i]);
     originTextures[i] = loadSDLTexture(imgPath);
     loadTileset(tilesetPath[i], originTextures[i]);
-    success &= (bool)originTextures[i];
 
+    if (!(bool)originTextures[i]) {
+      success = false;
 #ifdef DBG
-    if (!success) {
       SDL_Log("Failed to load %s", imgPath);
-    }
 #endif
+    }
   }
 
   // Open the font
