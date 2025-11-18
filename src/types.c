@@ -40,7 +40,7 @@ bool initText(Text* self, const char* str, SDL_Color color) {
   // Render text surface
   SDL_Surface* textSurface = TTF_RenderText_Solid(font, str, color);
   if (textSurface == NULL) {
-    printf("Unable to render text surface! SDL_ttf Error: %s\n",
+    SDL_Log("Unable to render text surface! SDL_ttf Error: %s\n",
            TTF_GetError());
   } else {
     // Create texture from surface pixels
@@ -49,7 +49,7 @@ bool initText(Text* self, const char* str, SDL_Color color) {
     self->height = textSurface->h;
     SDL_FreeSurface(textSurface);
     if (texture == NULL) {
-      printf("Unable to create texture from rendered text! SDL Error: %s\n",
+      SDL_Log("Unable to create texture from rendered text! SDL Error: %s\n",
              SDL_GetError());
     } else {
       self->origin = texture;

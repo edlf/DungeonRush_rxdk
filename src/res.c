@@ -19,52 +19,52 @@ const int n = SCREEN_WIDTH/UNIT;
 const int m = SCREEN_HEIGHT/UNIT;
 
 const char tilesetPath[TILESET_SIZE][PATH_LEN] = {
-    "res/drawable/0x72_DungeonTilesetII_v1_3",
-    "res/drawable/fireball_explosion1",
-    "res/drawable/halo_explosion1",
-    "res/drawable/halo_explosion2",
-    "res/drawable/fireball",
-    "res/drawable/floor_spike",
-    "res/drawable/floor_exit",
-    "res/drawable/HpMed",
-    "res/drawable/SwordFx",
-    "res/drawable/ClawFx",
-    "res/drawable/Shine",
-    "res/drawable/Thunder",
-    "res/drawable/BloodBound",
-    "res/drawable/arrow",
-    "res/drawable/explosion-2",
-    "res/drawable/ClawFx2",
-    "res/drawable/Axe",
-    "res/drawable/cross_hit",
-    "res/drawable/blood",
-    "res/drawable/SolidFx",
-    "res/drawable/IcePick",
-    "res/drawable/IceShatter",
-    "res/drawable/Ice",
-    "res/drawable/SwordPack",
-    "res/drawable/HolyShield",
-    "res/drawable/golden_cross_hit",
-    "res/drawable/ui",
-    "res/drawable/title",
-    "res/drawable/purple_ball",
-    "res/drawable/purple_exp",
-    "res/drawable/staff",
-    "res/drawable/Thunder_Yellow",
-    "res/drawable/attack_up",
-    "res/drawable/powerful_bow"};
-const char fontPath[] = "res/font/m5x7.ttf";
-const char textsetPath[] = "res/text.txt";
+    "D://res//drawable//0x72_DungeonTilesetII_v1_3",
+    "D://res//drawable//fireball_explosion1",
+    "D://res//drawable//halo_explosion1",
+    "D://res//drawable//halo_explosion2",
+    "D://res//drawable//fireball",
+    "D://res//drawable//floor_spike",
+    "D://res//drawable//floor_exit",
+    "D://res//drawable//HpMed",
+    "D://res//drawable//SwordFx",
+    "D://res//drawable//ClawFx",
+    "D://res//drawable//Shine",
+    "D://res//drawable//Thunder",
+    "D://res//drawable//BloodBound",
+    "D://res//drawable//arrow",
+    "D://res//drawable//explosion-2",
+    "D://res//drawable//ClawFx2",
+    "D://res//drawable//Axe",
+    "D://res//drawable//cross_hit",
+    "D://res//drawable//blood",
+    "D://res//drawable//SolidFx",
+    "D://res//drawable//IcePick",
+    "D://res//drawable//IceShatter",
+    "D://res//drawable//Ice",
+    "D://res//drawable//SwordPack",
+    "D://res//drawable//HolyShield",
+    "D://res//drawable//golden_cross_hit",
+    "D://res//drawable//ui",
+    "D://res//drawable//title",
+    "D://res//drawable//purple_ball",
+    "D://res//drawable//purple_exp",
+    "D://res//drawable//staff",
+    "D://res//drawable//Thunder_Yellow",
+    "D://res//drawable//attack_up",
+    "D://res//drawable//powerful_bow"};
+const char fontPath[] = "D://res//font//m5x7.ttf";
+const char textsetPath[] = "D://res//text.txt";
 
 const int bgmNums = 4;
 const char bgmsPath[AUDIO_BGM_SIZE][PATH_LEN] = {
-  "res/audio/main_title.ogg",
-  "res/audio/bg1.ogg",
-  "res/audio/bg2.ogg",
-  "res/audio/bg3.ogg"
+  "D://res//audio//main_title.ogg",
+  "D://res//audio//bg1.ogg",
+  "D://res//audio//bg2.ogg",
+  "D://res//audio//bg3.ogg"
 };
-const char soundsPath[PATH_LEN] = "res/audio/sounds";
-const char soundsPathPrefix[PATH_LEN] = "res/audio/";
+const char soundsPath[PATH_LEN] = "D://res//audio//sounds";
+const char soundsPathPrefix[PATH_LEN] = "D://res//audio";
 // Gloabls
 int texturesCount;
 Texture textures[TEXTURES_SIZE];
@@ -95,7 +95,7 @@ bool init() {
 
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-    printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+    SDL_Log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
     success = false;
   } else {
     // Create window
@@ -103,7 +103,7 @@ bool init() {
                               SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
                               SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (window == NULL) {
-      printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+      SDL_Log("Window could not be created! SDL_Error: %s\n", SDL_GetError());
       success = false;
     } else {
       // Software Render
@@ -112,11 +112,11 @@ bool init() {
           window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 #endif
 #ifdef SOFTWARE_ACC
-      printf("define software acc\n");
+      SDL_Log("define software acc\n");
       renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 #endif
       if (renderer == NULL) {
-        printf("Renderer could not be created! SDL Error: %s\n",
+        SDL_Log("Renderer could not be created! SDL Error: %s\n",
                SDL_GetError());
         success = false;
       } else {
@@ -124,24 +124,24 @@ bool init() {
         // Initialize PNG loading
         int imgFlags = IMG_INIT_PNG;
         if (!(IMG_Init(imgFlags) & imgFlags)) {
-          printf("SDL_image could not initialize! SDL_image Error: %s\n",
+          SDL_Log("SDL_image could not initialize! SDL_image Error: %s\n",
                  IMG_GetError());
           success = false;
         }
         // Initialize SDL_ttf
         if (TTF_Init() == -1) {
-          printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n",
+          SDL_Log("SDL_ttf could not initialize! SDL_ttf Error: %s\n",
                  TTF_GetError());
           success = false;
         }
         //Initialize SDL_mixer
         if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 ) {
-          printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
+          SDL_Log( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
           success = false;
         }
         //Initialize SDL_net
         if (SDLNet_Init() == -1) {
-          printf("SDL_Net_Init: %s\n", SDLNet_GetError());
+          SDL_Log("SDL_Net_Init: %s\n", SDLNet_GetError());
           success = false;
         }
       }
@@ -156,13 +156,13 @@ SDL_Texture* loadSDLTexture(const char* path) {
   // Load image at specified path
   SDL_Surface* loadedSurface = IMG_Load(path);
   if (loadedSurface == NULL) {
-    printf("Unable to load image %s! SDL_image Error: %s\n", path,
+    SDL_Log("Unable to load image %s! SDL_image Error: %s\n", path,
            IMG_GetError());
   } else {
     // Create texture from surface pixels
     newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
     if (newTexture == NULL) {
-      printf("Unable to create texture from %s! SDL Error: %s\n", path,
+      SDL_Log("Unable to create texture from %s! SDL Error: %s\n", path,
              SDL_GetError());
     }
 
@@ -184,7 +184,7 @@ bool loadTextset() {
       success = false;
     }
 #ifdef DBG
-    printf("Texts #%d: %s loaded\n", textsCount - 1, str);
+    SDL_Log("Texts #%d: %s loaded\n", textsCount - 1, str);
 #endif
   }
   fclose(file);
@@ -192,6 +192,10 @@ bool loadTextset() {
 }
 bool loadTileset(const char* path, SDL_Texture* origin) {
   FILE* file = fopen(path, "r");
+  if (!file) {
+      SDL_Log("Failed to open %s", path);
+      return false;
+  }
   int x, y, w, h, f;
   char resName[256];
   while (fscanf(file, "%s %d %d %d %d %d", resName, &x, &y, &w, &h, &f) == 6) {
@@ -204,7 +208,7 @@ bool loadTileset(const char* path, SDL_Texture* origin) {
       p->crops[i].w = w;
     }
 #ifdef DBG
-    printf("Resources #%d: %s %d %d %d %d %d loaded\n", texturesCount - 1,
+    SDL_Log("Resources #%d: %s %d %d %d %d %d loaded\n", texturesCount - 1,
            resName, x, y, w, h, f);
 #endif
   }
@@ -216,20 +220,31 @@ bool loadAudio() {
   for (int i = 0; i < bgmNums; i++) {
     bgms[i] = Mix_LoadMUS(bgmsPath[i]);
     success &= bgms[i] != NULL;
-    if (!bgms[i]) printf("Failed to load %s: SDL_mixer Error: %s\n", bgmsPath[i], Mix_GetError());
+    if (!bgms[i]) {
+        SDL_Log("Failed to load %s: SDL_mixer Error: %s\n", bgmsPath[i], Mix_GetError());
+    }
     #ifdef DBG
-    else printf("BGM %s loaded\n", bgmsPath[i]);
+    else {
+      SDL_Log("BGM %s loaded\n", bgmsPath[i]);
+    }
     #endif
   }
   FILE* f = fopen(soundsPath,"r");
+  if (f == NULL) {
+      return false;
+  }
   char buf[PATH_LEN], path[PATH_LEN<<1];
   while (~fscanf(f, "%s", buf)) {
     sprintf(path, "%s%s", soundsPathPrefix, buf);
     sounds[soundsCount] = Mix_LoadWAV(path);
     success &= sounds[soundsCount] != NULL;
-    if (!sounds[soundsCount]) printf("Failed to load %s: : SDL_mixer Error: %s\n", path, Mix_GetError());
+    if (!sounds[soundsCount]) {
+        SDL_Log("Failed to load %s: : SDL_mixer Error: %s\n", path, Mix_GetError());
+    }
     #ifdef DBG
-    else printf("Sound #%d: %s\n", soundsCount, path);
+    else {
+      SDL_Log("Sound #%d: %s\n", soundsCount, path);
+    }
     #endif
     soundsCount++;
   }
@@ -253,11 +268,11 @@ bool loadMedia() {
   // Open the font
   font = TTF_OpenFont(fontPath, FONT_SIZE);
   if (font == NULL) {
-    printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+    SDL_Log("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
     success = false;
   } else {
     if (!loadTextset()) {
-      printf("Failed to load textset!\n");
+      SDL_Log("Failed to load textset!\n");
       success = false;
     }
   }
@@ -266,7 +281,7 @@ bool loadMedia() {
   initCommonSprites();
 
   if (!loadAudio()) {
-    printf("Failed to load audio!\n");
+    SDL_Log("Failed to load audio!\n");
     success = false;
   }
 

@@ -61,7 +61,7 @@ void printMap() {
     for (int t = 0; t < 2; t++) {
       for (int j = 0; j < m; j++) {
         char ch = primMap[i][j] ? '#' : '.';
-        printf("%c%c", ch, ch);
+        SDL_Log("%c%c", ch, ch);
       }
       putchar('\n');
     }
@@ -199,7 +199,7 @@ void initRandomMap(double floorPercent, int smoothTimes, double trapRate) {
   initBlock(&map[exitX][exitY], BLOCK_EXIT, exitX * UNIT, exitY * UNIT,
             RES_FLOOR_EXIT, false);
 #ifdef DBG
-  printf("exit: %d %d\n", exitX, exitY);
+  SDL_Log("exit: %d %d\n", exitX, exitY);
 #endif
   initMap();
   decorateMap();

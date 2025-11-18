@@ -74,3 +74,4 @@ dungeon_rush
 *.o
 *.gch
 build
+/DungeonRush

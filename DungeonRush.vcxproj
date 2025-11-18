@@ -70,7 +70,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>XBOX;_XBOX;__XBOX__;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XBOX;_XBOX;__XBOX__;_DEBUG;DBG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(SolutionDir)libSDL2x_image\include;$(SolutionDir)include;$(SolutionDir)libSDL2x_ttf\include;$(SolutionDir)libSDL2x_ttf\external\freetype\include;$(SolutionDir)libSDL2x_mixer\include</AdditionalIncludeDirectories>
@@ -103,7 +103,7 @@
 "$(RXDK_LIBS)bin\imagebld.exe" /in:"$(OutDir)$(TargetFileName)" /out:"$(OutDir)$(TargetName).xbe" /nologo /stack:65536 /debug /nolibwarn
 MKDIR "$(OutDir)Build\$(ProjectName)"
 COPY /Y "$(OutDir)$(TargetName).xbe" "$(OutDir)Build\$(ProjectName)\default.xbe"
-XCOPY /I /E /S /Y /F "$(ProjectDir)res" "$(OutDir)Build\$(ProjectName)"
+XCOPY /I /E /S /Y /F "$(ProjectDir)\res" "$(OutDir)Build\$(ProjectName)\res"
 MKDIR "$(OutDir)XISO"
 "$(RXDK_LIBS)bin\xdvdfs.exe" pack "$(OutDir)Build\$(ProjectName)" "$(OutDir)XISO\$(ProjectName).iso"</Command>
     </PostBuildEvent>
