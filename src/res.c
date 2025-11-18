@@ -19,52 +19,52 @@ const int n = SCREEN_WIDTH/UNIT;
 const int m = SCREEN_HEIGHT/UNIT;
 
 const char tilesetPath[TILESET_SIZE][PATH_LEN] = {
-    "D://res//drawable//0x72_DungeonTilesetII_v1_3",
-    "D://res//drawable//fireball_explosion1",
-    "D://res//drawable//halo_explosion1",
-    "D://res//drawable//halo_explosion2",
-    "D://res//drawable//fireball",
-    "D://res//drawable//floor_spike",
-    "D://res//drawable//floor_exit",
-    "D://res//drawable//HpMed",
-    "D://res//drawable//SwordFx",
-    "D://res//drawable//ClawFx",
-    "D://res//drawable//Shine",
-    "D://res//drawable//Thunder",
-    "D://res//drawable//BloodBound",
-    "D://res//drawable//arrow",
-    "D://res//drawable//explosion-2",
-    "D://res//drawable//ClawFx2",
-    "D://res//drawable//Axe",
-    "D://res//drawable//cross_hit",
-    "D://res//drawable//blood",
-    "D://res//drawable//SolidFx",
-    "D://res//drawable//IcePick",
-    "D://res//drawable//IceShatter",
-    "D://res//drawable//Ice",
-    "D://res//drawable//SwordPack",
-    "D://res//drawable//HolyShield",
-    "D://res//drawable//golden_cross_hit",
-    "D://res//drawable//ui",
-    "D://res//drawable//title",
-    "D://res//drawable//purple_ball",
-    "D://res//drawable//purple_exp",
-    "D://res//drawable//staff",
-    "D://res//drawable//Thunder_Yellow",
-    "D://res//drawable//attack_up",
-    "D://res//drawable//powerful_bow"};
-const char fontPath[] = "D://res//font//m5x7.ttf";
-const char textsetPath[] = "D://res//text.txt";
+    "D:\\res\\drawable\\0x72_DungeonTilesetII_v1_3",
+    "D:\\res\\drawable\\fireball_explosion1",
+    "D:\\res\\drawable\\halo_explosion1",
+    "D:\\res\\drawable\\halo_explosion2",
+    "D:\\res\\drawable\\fireball",
+    "D:\\res\\drawable\\floor_spike",
+    "D:\\res\\drawable\\floor_exit",
+    "D:\\res\\drawable\\HpMed",
+    "D:\\res\\drawable\\SwordFx",
+    "D:\\res\\drawable\\ClawFx",
+    "D:\\res\\drawable\\Shine",
+    "D:\\res\\drawable\\Thunder",
+    "D:\\res\\drawable\\BloodBound",
+    "D:\\res\\drawable\\arrow",
+    "D:\\res\\drawable\\explosion-2",
+    "D:\\res\\drawable\\ClawFx2",
+    "D:\\res\\drawable\\Axe",
+    "D:\\res\\drawable\\cross_hit",
+    "D:\\res\\drawable\\blood",
+    "D:\\res\\drawable\\SolidFx",
+    "D:\\res\\drawable\\IcePick",
+    "D:\\res\\drawable\\IceShatter",
+    "D:\\res\\drawable\\Ice",
+    "D:\\res\\drawable\\SwordPack",
+    "D:\\res\\drawable\\HolyShield",
+    "D:\\res\\drawable\\golden_cross_hit",
+    "D:\\res\\drawable\\ui",
+    "D:\\res\\drawable\\title",
+    "D:\\res\\drawable\\purple_ball",
+    "D:\\res\\drawable\\purple_exp",
+    "D:\\res\\drawable\\staff",
+    "D:\\res\\drawable\\Thunder_Yellow",
+    "D:\\res\\drawable\\attack_up",
+    "D:\\res\\drawable\\powerful_bow"};
+const char fontPath[] = "D:\\res\\font\\m5x7.ttf";
+const char textsetPath[] = "D:\\res\\text.txt";
 
 const int bgmNums = 4;
 const char bgmsPath[AUDIO_BGM_SIZE][PATH_LEN] = {
-  "D://res//audio//main_title.ogg",
-  "D://res//audio//bg1.ogg",
-  "D://res//audio//bg2.ogg",
-  "D://res//audio//bg3.ogg"
+  "D:\\res\\audio\\main_title.ogg",
+  "D:\\res\\audio\\bg1.ogg",
+  "D:\\res\\audio\\bg2.ogg",
+  "D:\\res\\audio\\bg3.ogg"
 };
-const char soundsPath[PATH_LEN] = "D://res//audio//sounds";
-const char soundsPathPrefix[PATH_LEN] = "D://res//audio";
+const char soundsPath[PATH_LEN] = "D:\\res\\audio\\sounds";
+const char soundsPathPrefix[PATH_LEN] = "D:\\res\\audio\\";
 // Gloabls
 int texturesCount;
 Texture textures[TEXTURES_SIZE];
@@ -172,6 +172,7 @@ SDL_Texture* loadSDLTexture(const char* path) {
 
   return newTexture;
 }
+
 bool loadTextset() {
   bool success = true;
   FILE* file = fopen(textsetPath, "r");
@@ -190,10 +191,13 @@ bool loadTextset() {
   fclose(file);
   return success;
 }
+
 bool loadTileset(const char* path, SDL_Texture* origin) {
   FILE* file = fopen(path, "r");
   if (!file) {
+#ifdef DBG
       SDL_Log("Failed to open %s", path);
+#endif
       return false;
   }
   int x, y, w, h, f;
@@ -251,6 +255,7 @@ bool loadAudio() {
   fclose(f);
   return success;
 }
+
 bool loadMedia() {
   // Loading success flag
   bool success = true;
@@ -258,13 +263,23 @@ bool loadMedia() {
   initCommonEffects();
   // Load tileset
   char imgPath[PATH_LEN + 4];
+
   for (int i = 0; i < TILESET_SIZE; i++) {
-    if (!strlen(tilesetPath[i])) break;
+    if (!strlen(tilesetPath[i])) {
+      break;
+    }
     sprintf(imgPath, "%s.png", tilesetPath[i]);
     originTextures[i] = loadSDLTexture(imgPath);
     loadTileset(tilesetPath[i], originTextures[i]);
     success &= (bool)originTextures[i];
+
+#ifdef DBG
+    if (!success) {
+      SDL_Log("Failed to load %s", imgPath);
+    }
+#endif
   }
+
   // Open the font
   font = TTF_OpenFont(fontPath, FONT_SIZE);
   if (font == NULL) {
@@ -287,6 +302,7 @@ bool loadMedia() {
 
   return success;
 }
+
 void cleanup() {
   // Deallocate surface
   for (int i = 0; i < TILESET_SIZE; i++) {
